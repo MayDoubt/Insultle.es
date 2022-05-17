@@ -1,23 +1,19 @@
 ------------------------------------------------------
 -- Centro : Cesur Sevilla
--- Descripción : Create Database Script Insultle.es
--- Autor : Fernando Pérez Nieto
+-- DescripciÃ³n : Create Database Script Insultle.es
+-- Autor : Fernando PÃ©rez Nieto
 -- Autor : Jonatan Carrera Viera
 ------------------------------------------------------
+--DROP DATABASE
+DROP DATABASE IF EXISTS INSULTLE
 
 --CREATE DATABASE
 CREATE DATABASE INSULTLE
+GO
 
 --USE DATABASE
 USE INSULTLE
-
---DROP DATABASE
-IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'INSULTLE')
-BEGIN
-CREATE DATABASE INSULTLE
-END
-
---DROP TABLES
+GO
 
 --CREATE TABLES
 --CREATE TABLE USERS
