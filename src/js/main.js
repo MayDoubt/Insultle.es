@@ -126,26 +126,34 @@ const checkRow = () => {
     const guess = guessRows[currentRow].join('')
     if (currentTile === insultle.length) {
         //check diccionario
-        //if(no existe en el diccionario)
-        //showMessage('Esa palabra no existe fierah');
-        //else
-        console.log('guess is ' + guess, 'insultle is ' + insultle)
-        flipTile()
-        if (insultle == guess) {
-            showMessage('Ere un crack!')
-            isGameOver = true
-            return
-        } else {
-            if (currentRow >= 5) {
-                isGameOver = false
-                showMessage('Lo siento hermano')
-                return
+        $.ajax({
+            url: "checkWords.php",
+            type: 'POST',
+            data: guess,
+            success: function(response){
+                if (response == 0) {
+                    showMessage('Esa palabra no existe fierah')
+                }else{
+                    console.log('guess is ' + guess, 'insultle is ' + insultle)
+                    flipTile()
+                    if (insultle == guess) {
+                        showMessage('Ere un crack!')
+                        isGameOver = true
+                        return
+                    } else {
+                        if (currentRow >= 5) {
+                            isGameOver = false
+                            showMessage('Lo siento hermano')
+                            return
+                        }
+                        if (currentRow < 5) {
+                            currentRow++
+                            currentTile = 0
+                        }
+                    }
+                }
             }
-            if (currentRow < 5) {
-                currentRow++
-                currentTile = 0
-            }
-        }
+        })
     }
 }
 

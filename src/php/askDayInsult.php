@@ -1,29 +1,44 @@
 <?php
 
     // Create connection
-    $srv = "sqlserver";
-    $opc = array(
-        "Database"=>"INSULTLE",
-        "UID"=>"sa",
-        "PWD"=>"12345Ab##"
-    );
-
-    $con = sqlsrv_connect($srv,$opc) or
-        die(print_r(sqlsrv_errors(), true));
+    if ((include 'connection.php') == TRUE) {
+        $con = include 'connection.php';
+        echo 'Connection to DB OK';
+    }
 
     if($con) {
 
-    $sql="SELECT TOP 1 UPPER(insult) as insult FROM insults WHERE LEN(insult)=5";
-    $result = sqlsrv_query($con, $sql);
+        // Se genera la vista cogiendo una palabra y añadiendo
+        // una columna con un número generado aleatorio, se ordena
+        // por ese número aleatorio y nos quedamos con el top1
+        // Esta vista se crea nueva siempre que se llame a este fichero
+        $sql="DECLARE @sql VARCHAR(200)
+    
+        SELECT @sql='CREATE OR ALTER VIEW getRandomInsult 
+        AS SELECT TOP 1 insult, CAST(RAND(CHECKSUM(NEWID())) * 300 as INT) randomNumber 
+        FROM insults WHERE len(insult)=5 ORDER BY randomNumber DESC'
 
-    if(!$result) {
-    $result = sqlsrv_query($con, $sql);
-        die('Query failed'. sqlsrv_error($connection));
-    }
+        EXEC (@sql)";
+        $result = sqlsrv_query($con, $sql);
 
-    $row=sqlsrv_fetch_array($result);
+        if(!$result) {
+            $result = sqlsrv_query($con, $sql);
+                die('First query failed'. sqlsrv_errors($connection));
+            }
+
+        $sql="SELECT UPPER(dbo.dayWord(getDate()))";
+        $result = sqlsrv_query($con, $sql);
+
+        if(!$result) {
+        $result = sqlsrv_query($con, $sql);
+            die('Query failed'. sqlsrv_errors($connection));
+        }
+
+        $row=sqlsrv_fetch_array($result);
 	        echo $row['insult'];
 		    sqlsrv_close($con);
 
+    } else {
+        die ('No pudo conectarse: ' . sqlsrv_errors());
     }
 ?>
